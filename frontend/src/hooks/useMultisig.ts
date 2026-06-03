@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import MultisigABI from "../abi/Multisig.json";
 
 // ====== CAMBIAR ESTA DIRECCIÓN DESPUÉS DEL DEPLOY ======
-const CONTRACT_ADDRESS = "0x_PONER_DIRECCION_DEL_CONTRATO_DESPLEGADO";
+const CONTRACT_ADDRESS = "0x1d87a2461042B2af06e0Aa433DF499ef6E56908A";
 // =========================================================
 
 // Tipo para una propuesta
