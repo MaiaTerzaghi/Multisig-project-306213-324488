@@ -42,9 +42,9 @@ Abrir http://localhost:5173 en el navegador con MetaMask conectado a Sepolia.
 - Maia: `0xE7888BB7685842AE17F95c27494F403B7863Ce6A`
 - Pilar: `0xa030aA74b0607DE3F2053d9D20F6992e1b32677f`
 
-**Threshold:** 2 (ambas deben aprobar para ejecutar)
+**Threshold:** 2 (ambas debemos aprobar para ejecutar)
 
 ## Integrantes
 
-- Maia Terzaghi
-- Pilar Fraschini
+- Maia Terzaghi - 306213
+- Pilar Fraschini - 324488
