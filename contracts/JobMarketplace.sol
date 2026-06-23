@@ -48,4 +48,54 @@ contract JobMarketplace is ReentrancyGuard {
         if (_paymentToken == address(0)) revert InvalidAddress();
         paymentToken = IERC20(_paymentToken);
     }
+
+    function createJob(
+        string calldata _description,
+        uint256 _budget,
+        address _evaluator,
+        address _provider,
+        uint256 _expiresAt
+    ) external returns (uint256 jobId) {
+        if (_evaluator == address(0)) revert InvalidAddress();
+        if (_budget == 0) revert InvalidBudget();
+        if (_expiresAt <= block.timestamp) revert InvalidExpiry();
+
+        jobId = jobCount;
+        jobs[jobId] = Job({
+            client: msg.sender,
+            provider: _provider,
+            evaluator: _evaluator,
+            description: _description,
+            budget: _budget,
+            expiresAt: _expiresAt,
+            status: Status.Open,
+            deliverableRef: bytes32(0)
+        });
+        jobCount++;
+
+        emit JobCreated(jobId, msg.sender, _provider, _evaluator, _budget, _expiresAt);
+    }
+
+    function setProvider(uint256 _jobId, address _provider) external {
+        Job storage job = jobs[_jobId];
+        if (msg.sender != job.client) revert Unauthorized();
+        if (job.status != Status.Open) revert WrongStatus();
+        if (job.provider != address(0)) revert ProviderAlreadySet();
+        if (_provider == address(0)) revert InvalidAddress();
+
+        job.provider = _provider;
+        emit ProviderSet(_jobId, _provider);
+    }
+
+    function fund(uint256 _jobId) external nonReentrant {
+        Job storage job = jobs[_jobId];
+        if (msg.sender != job.client) revert Unauthorized();
+        if (job.status != Status.Open) revert WrongStatus();
+        if (job.provider == address(0)) revert ProviderNotSet();
+
+        job.status = Status.Funded;
+        paymentToken.safeTransferFrom(msg.sender, address(this), job.budget);
+
+        emit JobFunded(_jobId, msg.sender, job.budget);
+    }
 }
