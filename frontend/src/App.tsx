@@ -1,73 +1,75 @@
-import { useMultisig } from "./hooks/useMultisig";
-import ConnectWallet from "./components/ConnectWallet";
-import ContractInfo from "./components/ContractInfo";
-import NewProposalForm from "./components/NewProposalForm";
-import ProposalList from "./components/ProposalList";
+import { useState } from "react";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAccount } from "wagmi";
+import AccountPanel from "./components/AccountPanel";
+import JobBoard from "./components/JobBoard";
+import JobDetail from "./components/JobDetail";
+import CreateJobForm from "./components/CreateJobForm";
 
-export default function App() {
-  const {
-    signers,
-    threshold,
-    proposals,
-    contractAddress,
-    account,
-    isSigner,
-    isConnected,
-    loading,
-    error,
-    successMsg,
-    connectWallet,
-    propose,
-    approveProposal,
-    executeProposal,
-    cancelProposal,
-    hasUserApproved,
-  } = useMultisig();
+type View = "board" | "detail" | "create";
+
+function App() {
+  const { isConnected } = useAccount();
+  const [view, setView] = useState<View>("board");
+  const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
+
+  if (!isConnected) {
+    return (
+      <div className="connect-screen">
+        <h1>Job Marketplace</h1>
+        <p>Conecta tu billetera para comenzar</p>
+        <ConnectButton />
+      </div>
+    );
+  }
 
   return (
     <div className="app">
-      <h1>Multisig DApp</h1>
+      <header className="header">
+        <h1 onClick={() => setView("board")} style={{ cursor: "pointer" }}>
+          Job Marketplace
+        </h1>
+        <ConnectButton />
+      </header>
 
-      <ConnectWallet
-        account={account}
-        isConnected={isConnected}
-        onConnect={connectWallet}
-      />
+      <AccountPanel />
 
-      {error && <div className="error-msg" style={{ textAlign: "center", marginBottom: "1rem" }}>{error}</div>}
-      {successMsg && <div className="success-msg" style={{ textAlign: "center", marginBottom: "1rem" }}>{successMsg}</div>}
+      <nav className="nav">
+        <button
+          className={view === "board" ? "active" : ""}
+          onClick={() => setView("board")}
+        >
+          Tablero
+        </button>
+        <button
+          className={view === "create" ? "active" : ""}
+          onClick={() => setView("create")}
+        >
+          Publicar Trabajo
+        </button>
+      </nav>
 
-      {isConnected && (
-        <>
-          <ContractInfo
-            contractAddress={contractAddress}
-            signers={signers}
-            threshold={threshold}
-            account={account}
-            isSigner={isSigner}
-          />
-
-          <NewProposalForm
-            isSigner={isSigner}
-            loading={loading}
-            onPropose={propose}
-          />
-
-          <ProposalList
-            proposals={proposals}
-            threshold={threshold}
-            account={account}
-            isSigner={isSigner}
-            loading={loading}
-            onApprove={approveProposal}
-            onExecute={executeProposal}
-            onCancel={cancelProposal}
-            hasUserApproved={hasUserApproved}
-          />
-        </>
+      {view === "board" && (
+        <JobBoard
+          onSelectJob={(id) => {
+            setSelectedJobId(id);
+            setView("detail");
+          }}
+        />
       )}
 
-      {loading && <div className="loading">Procesando transaccion...</div>}
+      {view === "detail" && selectedJobId !== null && (
+        <JobDetail
+          jobId={selectedJobId}
+          onBack={() => setView("board")}
+        />
+      )}
+
+      {view === "create" && (
+        <CreateJobForm onCreated={() => setView("board")} />
+      )}
     </div>
   );
 }
+
+export default App;
