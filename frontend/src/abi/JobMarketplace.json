@@ -1,0 +1,190 @@
+[
+  {
+    "inputs": [{ "name": "_paymentToken", "type": "address" }],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      { "name": "_description", "type": "string" },
+      { "name": "_budget", "type": "uint256" },
+      { "name": "_evaluator", "type": "address" },
+      { "name": "_provider", "type": "address" },
+      { "name": "_expiresAt", "type": "uint256" }
+    ],
+    "name": "createJob",
+    "outputs": [{ "name": "jobId", "type": "uint256" }],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "name": "_jobId", "type": "uint256" },
+      { "name": "_provider", "type": "address" }
+    ],
+    "name": "setProvider",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "name": "_jobId", "type": "uint256" }],
+    "name": "fund",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "name": "_jobId", "type": "uint256" },
+      { "name": "_deliverableRef", "type": "bytes32" }
+    ],
+    "name": "submit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "name": "_jobId", "type": "uint256" },
+      { "name": "_reason", "type": "bytes32" }
+    ],
+    "name": "complete",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "name": "_jobId", "type": "uint256" },
+      { "name": "_reason", "type": "bytes32" }
+    ],
+    "name": "reject",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "name": "_jobId", "type": "uint256" }],
+    "name": "claimRefund",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "name": "_jobId", "type": "uint256" }],
+    "name": "getJob",
+    "outputs": [
+      {
+        "components": [
+          { "name": "client", "type": "address" },
+          { "name": "provider", "type": "address" },
+          { "name": "evaluator", "type": "address" },
+          { "name": "description", "type": "string" },
+          { "name": "budget", "type": "uint256" },
+          { "name": "expiresAt", "type": "uint256" },
+          { "name": "status", "type": "uint8" },
+          { "name": "deliverableRef", "type": "bytes32" }
+        ],
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getJobCount",
+    "outputs": [{ "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "paymentToken",
+    "outputs": [{ "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "name": "jobId", "type": "uint256" },
+      { "indexed": true, "name": "client", "type": "address" },
+      { "indexed": false, "name": "provider", "type": "address" },
+      { "indexed": false, "name": "evaluator", "type": "address" },
+      { "indexed": false, "name": "budget", "type": "uint256" },
+      { "indexed": false, "name": "expiresAt", "type": "uint256" }
+    ],
+    "name": "JobCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "name": "jobId", "type": "uint256" },
+      { "indexed": true, "name": "provider", "type": "address" }
+    ],
+    "name": "ProviderSet",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "name": "jobId", "type": "uint256" },
+      { "indexed": true, "name": "client", "type": "address" },
+      { "indexed": false, "name": "amount", "type": "uint256" }
+    ],
+    "name": "JobFunded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "name": "jobId", "type": "uint256" },
+      { "indexed": true, "name": "provider", "type": "address" },
+      { "indexed": false, "name": "deliverableRef", "type": "bytes32" }
+    ],
+    "name": "JobSubmitted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "name": "jobId", "type": "uint256" },
+      { "indexed": true, "name": "evaluator", "type": "address" },
+      { "indexed": false, "name": "reason", "type": "bytes32" }
+    ],
+    "name": "JobCompleted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "name": "jobId", "type": "uint256" },
+      { "indexed": true, "name": "rejector", "type": "address" },
+      { "indexed": false, "name": "reason", "type": "bytes32" }
+    ],
+    "name": "JobRejected",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "name": "jobId", "type": "uint256" }
+    ],
+    "name": "JobExpired",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "name": "jobId", "type": "uint256" },
+      { "indexed": true, "name": "client", "type": "address" },
+      { "indexed": false, "name": "amount", "type": "uint256" }
+    ],
+    "name": "Refunded",
+    "type": "event"
+  }
+]
