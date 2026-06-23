@@ -98,4 +98,68 @@ contract JobMarketplace is ReentrancyGuard {
 
         emit JobFunded(_jobId, msg.sender, job.budget);
     }
+
+    function submit(uint256 _jobId, bytes32 _deliverableRef) external {
+        Job storage job = jobs[_jobId];
+        if (msg.sender != job.provider) revert Unauthorized();
+        if (job.status != Status.Funded) revert WrongStatus();
+
+        job.status = Status.Submitted;
+        job.deliverableRef = _deliverableRef;
+
+        emit JobSubmitted(_jobId, msg.sender, _deliverableRef);
+    }
+
+    function complete(uint256 _jobId, bytes32 _reason) external nonReentrant {
+        Job storage job = jobs[_jobId];
+        if (msg.sender != job.evaluator) revert Unauthorized();
+        if (job.status != Status.Submitted) revert WrongStatus();
+
+        job.status = Status.Completed;
+        paymentToken.safeTransfer(job.provider, job.budget);
+
+        emit JobCompleted(_jobId, msg.sender, _reason);
+    }
+
+    function reject(uint256 _jobId, bytes32 _reason) external nonReentrant {
+        Job storage job = jobs[_jobId];
+
+        if (job.status == Status.Open) {
+            if (msg.sender != job.client) revert Unauthorized();
+        } else if (job.status == Status.Funded || job.status == Status.Submitted) {
+            if (msg.sender != job.evaluator) revert Unauthorized();
+        } else {
+            revert WrongStatus();
+        }
+
+        Status prev = job.status;
+        job.status = Status.Rejected;
+
+        if (prev == Status.Funded || prev == Status.Submitted) {
+            paymentToken.safeTransfer(job.client, job.budget);
+            emit Refunded(_jobId, job.client, job.budget);
+        }
+
+        emit JobRejected(_jobId, msg.sender, _reason);
+    }
+
+    function claimRefund(uint256 _jobId) external nonReentrant {
+        Job storage job = jobs[_jobId];
+        if (job.status != Status.Funded && job.status != Status.Submitted) revert WrongStatus();
+        if (block.timestamp <= job.expiresAt) revert NotExpired();
+
+        job.status = Status.Expired;
+        paymentToken.safeTransfer(job.client, job.budget);
+
+        emit Refunded(_jobId, job.client, job.budget);
+        emit JobExpired(_jobId);
+    }
+
+    function getJob(uint256 _jobId) external view returns (Job memory) {
+        return jobs[_jobId];
+    }
+
+    function getJobCount() external view returns (uint256) {
+        return jobCount;
+    }
 }
