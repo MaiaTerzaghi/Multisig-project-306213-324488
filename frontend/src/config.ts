@@ -11,7 +11,6 @@ export const config = getDefaultConfig({
   },
 });
 
-// ====== CAMBIAR DESPUES DEL DEPLOY ======
-export const MARKETPLACE_ADDRESS = "0x0000000000000000000000000000000000000000" as `0x${string}`;
-export const TOKEN_ADDRESS = "0x0000000000000000000000000000000000000000" as `0x${string}`;
+export const MARKETPLACE_ADDRESS = "0x1ec831fe1004161Dc0F862243388BECbE2eD4ECa" as `0x${string}`;
+export const TOKEN_ADDRESS = "0x4d979a59b3443395e1179be7921C3B220b1FDae3" as `0x${string}`;
 export const MULTISIG_ADDRESS = "0x1d87a2461042B2af06e0Aa433DF499ef6E56908A" as `0x${string}`;
